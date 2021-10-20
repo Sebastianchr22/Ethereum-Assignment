@@ -1,0 +1,436 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Smart Contract Bank</title>
+  <meta property="og:type" content="website">
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+
+
+  <link rel="stylesheet" href="css/style1.css">
+
+</head>
+
+<body>
+
+    <div id="login" class="box">
+        <h1>New user? Register here:</h1>
+        <input  type="text" id="createNameField" placeholder="Full name"><br>
+        <input  type="password" id="createPassField" placeholder="Password"><br>
+        <button class="smallYellow" onclick="createNewUser()">Create</button>
+        <br>
+        <h2>Already a user? Login below:</h2>
+        <input  type="text" id="logInNameField" placeholder="Full name"><br>
+        <button class="smallWhite" onclick="logInUser()">Log in</button>
+    </div>
+
+    <div class="box" id="userArea" hidden="true">
+        <div id="logOut" hidden="true">
+            <h1 id="username">Hello, </h1>
+            <button class="smallWhite" onclick="logOut()">Log out</button>
+        </div>
+        <div style="height:60px"></div>
+        <h1 id="balanceHolder">Your current balance is $0</h1>
+        <input type="number" id="money" placeholder="0"> <br>
+        <button class="smallYellow" onclick="withdrawFunds()">Withdraw</button>
+        <button class="smallYellow" onclick="depositFunds()">Deposit</button>
+
+        <div style="height:60px"></div>
+        <h1>Making a transfer?</h1>
+        <input id="toName" placeholder="Recepient name">
+        <input id="transferAmount" placeholder="0"><br>
+        <button class="largeYellow" onclick="transferFunds()">Transfer</button>
+    </div>
+
+<script type="text/javascript">
+    var web3;
+    var accounts;
+    
+    var user = null;
+    var address = null;
+
+    async function loadWeb3(){
+        if(window.ethereum) {
+            console.log("Loading Web3")
+            web3 = await new Web3(window.ethereum);
+            console.log("Got Web3")
+            await window.ethereum.send('eth_requestAccounts');
+            console.log("Got Ethereum accounts via window.ethereum.send request")
+            accounts = await window.ethereum.request({ method: 'eth_accounts' });
+            console.log("Found the following accounts:")
+            console.log(accounts)
+        }
+    }
+
+    async function load(){
+        await loadWeb3()
+            .then( () => {loadContract()})
+    }
+
+    var contractABI = [
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "fromAddr",
+				"type": "address"
+			},
+			{
+				"name": "toAddr",
+				"type": "address"
+			},
+			{
+				"name": "funds",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFunds",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getNumberOfUsers",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"name": "password",
+				"type": "string"
+			}
+		],
+		"name": "createNewUser",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "addr",
+				"type": "address"
+			},
+			{
+				"name": "funds",
+				"type": "uint256"
+			}
+		],
+		"name": "depositFunds",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			},
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "addr",
+				"type": "address"
+			}
+		],
+		"name": "hasUser",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "hasUser",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "setup",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "addr",
+				"type": "address"
+			},
+			{
+				"name": "funds",
+				"type": "uint256"
+			}
+		],
+		"name": "withdrawFunds",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			},
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "name",
+				"type": "string"
+			}
+		],
+		"name": "getAddressOfUser",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			},
+			{
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "addr",
+				"type": "address"
+			}
+		],
+		"name": "getBalance",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
+    var contractAddr = '0xfa0F528fFc702aEe6740E1afC050cd035c510435'
+    function loadContract(){
+        console.log("Fetching specified contract")
+        window.contract = new web3.eth.Contract(contractABI, contractAddr)
+        console.log("Got the following contract methods:")
+        console.log(window.contract.methods)
+    }
+
+    load();
+
+    //Chain functions:
+    async function createNewUser(){
+        var name = document.getElementById("createNameField").value;
+        var pass = document.getElementById("createPassField").value;
+        console.log("Callign to create account with name: " + name + " pass: " + pass);
+        var fromAcc = await web3.eth.getAccounts();
+        await window.contract.methods.createNewUser(name, pass).send({from: fromAcc.toString()})
+        //await window.contract.methods.createNewUser(name, pass).call()
+            .then(res => {
+                user = name
+                hideLogIn();
+                showLogOut();
+                showUserArea();
+                getAddress();
+                name.innerHTML = "Hello, " + user;
+                document.getElementById("createPassField").value = '';
+                document.getElementById("createNameField").value = '';
+            })
+        
+        
+    }
+
+    async function logInUser(){
+        var name = document.getElementById("logInNameField").value;
+        console.log("Attempting login for user: " + name)
+        await window.contract.methods.hasUser(name).call()
+            .then(res => {
+                if(res){
+                    user = name;
+                    hideLogIn();
+                    showLogOut();
+                    showUserArea();
+                    getAddress();
+                    name.innerHTML = "Hello, " + user;
+                }
+                else{
+                    console.log("Login error")
+                }
+                document.getElementById("logInNameField").value = '';
+            })
+    }
+
+    async function getAddress(){
+        await window.contract.methods.getAddressOfUser(user).call()
+            .then(response => {
+                if(response[0]){
+                    address = response[1]
+                    getBalance()
+                }
+            })
+    }
+
+    async function getBalance(account){
+        var holder = document.getElementById("balanceHolder")
+        await window.contract.methods.getBalance(address).call()
+            .then(res => {
+                console.log("Balance found for user: " + formatter.format(res));
+                var text = "Your current balance is " + formatter.format(res);
+                holder.innerHTML = text;
+            })
+    }
+
+    async function depositFunds(){
+        var funds = document.getElementById("money").value;
+        document.getElementById("money").value = '';
+        var fromAcc = await web3.eth.getAccounts();
+        await window.contract.methods.depositFunds(address, funds).send({from: fromAcc.toString()})
+            .then(res => {
+                console.log(res)
+                getBalance();
+            })
+    }
+
+    async function withdrawFunds(){
+        var funds = document.getElementById("money").value;
+        document.getElementById("money").value = '';
+        var fromAcc = await web3.eth.getAccounts();
+        await window.contract.methods.withdrawFunds(address, funds).send({from: fromAcc.toString()})
+            .then(res => {
+                console.log(res);
+                getBalance();
+            })
+    }
+
+    async function transferFunds(){
+        var recepientName = document.getElementById("toName").value;
+        var transferAmount = document.getElementById("transferAmount").value;
+
+        var fromAcc = await web3.eth.getAccounts();
+        await window.contract.methods.getAddressOfUser(recepientName).call()
+        .then(recepientAddr => {
+            if(recepientAddr[0]){
+                console.log("Found address: " + recepientAddr[1] + " for name: " + recepientName)
+                window.contract.methods.transferFunds(address, recepientAddr[1], transferAmount).send({from: fromAcc.toString()})
+                .then(() => getBalance())
+            }
+        });
+
+        document.getElementById("transferAmount").value = '';
+        document.getElementById("toName").value = '';
+    }
+
+    //Visual functions
+    function showLogIn(){
+        document.getElementById("login").hidden = false;
+    }
+    function hideLogIn(){
+        document.getElementById("login").hidden = true;
+    }
+    function showLogOut(){
+        document.getElementById("logOut").hidden = false;
+        document.getElementById("username").innerHTML = "Hello, " + user
+    }
+    function hideLogOut(){
+        document.getElementById("logOut").hidden = true;
+    }
+    function logOut(){
+        user = null;
+        address = null;
+        hideLogOut();
+        showLogIn();
+        hideUserArea();
+    }
+    function showUserArea(){
+        document.getElementById("userArea").hidden = false;
+    }
+    function hideUserArea(){
+        document.getElementById("userArea").hidden = true;
+    }
+    
+
+    var formatter = new Intl.NumberFormat('en-US', {
+        //Source: https://stackoverflow.com/questions/149055/how-to-format-numbers-as-currency-strings
+        style: 'currency',
+        currency: 'USD',
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+    });
+
+</script>
+
+</body>
+</html>

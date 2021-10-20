@@ -1,0 +1,124 @@
+body{
+    padding-top: 5%;
+    max-width: 70vw;
+    margin: auto;
+    text-align: center;
+
+    font-size: 14pt;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+input{
+    font-size: 16pt;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin:1%;
+}
+button{
+    margin:1%;
+    width:145px;
+    height:65px;
+    font-size: 13pt;
+}
+
+
+input{
+    
+    padding: 5px 12px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #24292e;
+    vertical-align: middle;
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    outline: none;
+    box-shadow: rgba(225, 228, 232, 0.2) 0px 1px 0px 0px inset;
+    
+    
+}
+input:focus{
+    border-color: #0366d6;
+    outline: none;
+    box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+}
+
+.smallWhite{
+    
+    display: inline-block;
+    outline: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px 0 rgb(213 217 217 / 50%);
+    background: #FFF;
+    border: 1px solid #D5D9D9;
+    font-size: 20px;
+    height: 55px;
+    width:140px;
+    padding: 0 1px;
+    text-align: center;
+    font-weight: 500;
+    color: #0F1111; 
+}
+.smallWhite:hover{
+    background-color: #F7FAFA;
+    border-color: #D5D9D9;
+}
+
+
+.smallYellow{
+    
+    display: inline-block;
+    outline: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px 0 rgb(213 217 217 / 50%);
+    background: #FFD814;
+    border: 1px solid #FCD200;
+    font-size: 14pt;
+    height: 55px;
+    width:140px;
+    padding: 0 6px;
+    text-align: center;
+    color: #0F1111;
+}
+.smallYellow:hover{
+    background: #F7CA00;
+    border-color: #F2C200;
+    box-shadow: 0 2px 5px 0 rgb(213 217 217 / 50%);
+}
+
+
+.largeYellow{
+    
+    display: inline-block;
+    outline: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px 0 rgb(213 217 217 / 50%);
+    background: #FFD814;
+    border: 1px solid #FCD200;
+    font-size: 18px;
+    height: 58px;
+    padding: 0 11px;
+    text-align: center;
+    width: 620px;
+    min-width: 200px;
+    font-weight: 500;
+    color: #0F1111;
+      
+}
+.largeYellow:hover{
+    background: #F7CA00;
+    border-color: #F2C200;
+    box-shadow: 0 2px 5px 0 rgb(213 217 217 / 50%);
+}
+
+.box{
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px 0px;
+    padding:10%;
+    font-size: 18pt;
+}
+.box > input{
+    font-size: 20pt;
+}

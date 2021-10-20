@@ -46,9 +46,13 @@
     </div>
 
 <script type="text/javascript">
+    //Only thing for you change:
+    var contractAddr = 'insert address here ...'
+	
+    
+    
     var web3;
     var accounts;
-    
     var user = null;
     var address = null;
 
@@ -202,15 +206,6 @@
 	},
 	{
 		"constant": false,
-		"inputs": [],
-		"name": "setup",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
 		"inputs": [
 			{
 				"name": "addr",
@@ -279,7 +274,6 @@
 		"type": "function"
 	}
 ]
-    var contractAddr = '0xfa0F528fFc702aEe6740E1afC050cd035c510435'
     function loadContract(){
         console.log("Fetching specified contract")
         window.contract = new web3.eth.Contract(contractABI, contractAddr)

@@ -24,12 +24,6 @@ contract Banking{
     address[] private user_addresses;
     mapping(address => User) private user_map;
     
-    function setup() public{
-        address a = 0x001;
-        user_addresses.push(a);
-        user_map[a] = User("Sebas", "1234", 110, a);
-    }
-    
     function createNewUser(string name, string password) public returns(bool){
         if(!hasUser(name)){
             address addr = address(keccak256(abi.encodePacked(now)));

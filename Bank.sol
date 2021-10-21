@@ -8,11 +8,7 @@ pragma solidity ^0.4.14;
 * (optional) Write a web app to interact with the smart contract
 */
 
-import "github.com/Arachnid/solidity-stringutils/strings.sol";
-
 contract Banking{
-    
-    using strings for *;
     
     struct User{
         string name;
